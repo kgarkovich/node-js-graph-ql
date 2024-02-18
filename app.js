@@ -2,7 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const apiRoutes = require('./routes/api');
+const typeDefs = require('./typeDefs');
+const resolvers = require('./resolvers/userResolver');
+const { ApolloServer } = require('apollo-server-express');
 
 const app = express();
 const PORT = process.env.BASE_PORT || 4000;
@@ -22,12 +24,15 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
+const server = new ApolloServer({ typeDefs, resolvers });
 
-app.use('/api', apiRoutes);
-
-app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
-})
+const startApolloServer = async () => {
+    await server.start();
+    server.applyMiddleware({ app });
+}
+  
+startApolloServer().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Example app listening on port ${PORT}`);
+    });
+});
