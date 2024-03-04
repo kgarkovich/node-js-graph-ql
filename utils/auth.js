@@ -4,8 +4,7 @@ const { SECRET_KEY } = require('../config');
 const generateToken = (user) => {
   const token = jwt.sign(
     { id: user.id, username: user.username },
-    SECRET_KEY,
-    { expiresIn: '1h' }
+    SECRET_KEY
   );
   
   return token;
