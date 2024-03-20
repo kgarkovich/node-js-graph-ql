@@ -12,8 +12,15 @@ const typeDefs = gql`
     title: String!
     overview: String
     releaseDate: String
-    posterPath: String
-    backdropPath: String
+    poster_path: String
+    backdrop_path: String
+  }
+
+  type Results {
+    results: [Movie]
+    page: Int
+    total_pages: Int
+    total_results: Int
   }
 
   type MovieDetails {
@@ -37,8 +44,8 @@ const typeDefs = gql`
   type Query {
     user(username: String!, id: String!): User
     allMovies: [Movie]
-    anticipatedMovies: [Movie]
-    popularMovies: [Movie]
+    anticipatedMovies(first: Int): [Movie]
+    popularMovies(first: Int): [Movie]
     movieDetails: [MovieDetails]
     allWatchLists: [Watchlist]
   }

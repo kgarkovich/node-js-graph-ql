@@ -7,11 +7,11 @@ const { generateToken } = require('../utils/auth');
 const resolvers = {
   Query: {
     allMovies: (_, __, { dataSources }) =>
-      dataSources.MoviesAPI.getMovies('movie/popular'),
-    anticipatedMovies: (_, __, { dataSources }) =>
-      dataSources.MoviesAPI.getMovies('movie/anticipated'),
-    popularMovies: (_, __, { dataSources }) =>
-      dataSources.MoviesAPI.getMovies('movie/top_rated'),
+      dataSources.MoviesAPI.getMovies('movie/now_playing?language=en-US&page=2'),
+    anticipatedMovies: (_, { first }, { dataSources }) =>
+      dataSources.MoviesAPI.getPartMovies('movie/anticipated', first),
+    popularMovies: (_, { first }, { dataSources }) =>
+      dataSources.MoviesAPI.getPartMovies('movie/top_rated', first),
     movieDetails: async (_, { id }, { dataSources }) => {
       return dataSources.moviesAPI.getMovies(`movie/${id}`);
     },
