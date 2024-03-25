@@ -17,12 +17,12 @@ const resolvers = {
     },
     allWatchLists: async (_, { id }, { dataSources }) => {
       try {
-        const wishlists = await Wishlist.find();
+        const watchlists = await Watchlist.find({ id });
 
-        return wishlists;
+        return watchlists;
       } catch (error) {
-        console.error('Error fetching wishlists:', error);
-        throw new Error('Failed to fetch wishlists');
+        console.error('Error fetching watchlists:', error);
+        throw new Error('Failed to fetch watchlists');
       }
     },
   },
@@ -43,7 +43,7 @@ const resolvers = {
 
           const token = generateToken(newUser);
     
-          return { message: 'Success', token };
+          return { message: 'Success', token, id: newUser._id,  };
         } catch (error) {
           throw new Error(error);
         }
@@ -101,7 +101,7 @@ const resolvers = {
     },
     removeWatchlist: async (_, { id }) => {
       try {
-        const watchlist = await Watchlist.findByIdAndRemove(id);
+        const watchlist = await Watchlist.findByIdAndDelete(id);
 
         return watchlist;
       } catch (error) {

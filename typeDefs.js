@@ -38,7 +38,6 @@ const typeDefs = gql`
   type Watchlist {
     title: String!
     id: ID!
-    movie: MovieDetails
   }
 
   type Query {
@@ -48,14 +47,15 @@ const typeDefs = gql`
     popularMovies(first: Int): [Movie]
     movieDetails: [MovieDetails]
     allWatchLists: [Watchlist]
+    watchlist(userId: String!): [Watchlist]
   }
 
   type Mutation {
     register(username: String!, password: String!): AuthPayload!
     login(username: String!, password: String!): AuthPayload!
     addMovieToWatchlist(id: String!): MovieDetails!
-    createWatchlist(userId: ID!, title: String!): Watchlist!
-    removeWatchlist(id: ID!): Watchlist!
+    createWatchlist(userId: String!, title: String!): Watchlist!
+    removeWatchlist(id: String!): Watchlist!
   }
 `;
 
