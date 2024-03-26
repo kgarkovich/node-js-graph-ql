@@ -18,6 +18,12 @@ class MoviesAPI extends RESTDataSource {
 
         return response.results.slice(0, first);
     }
+
+    async getMovie(endpoint) {
+        const response = await this.get(endpoint, { api_key: 'c45754301ba30d5d51ca0f4ff494594b' });
+
+        return response;
+    }
 }
 
 module.exports = MoviesAPI;

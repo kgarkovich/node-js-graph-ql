@@ -9,11 +9,13 @@ const resolvers = {
     allMovies: (_, __, { dataSources }) =>
       dataSources.MoviesAPI.getMovies('movie/now_playing?language=en-US&page=2'),
     anticipatedMovies: (_, { first }, { dataSources }) =>
-      dataSources.MoviesAPI.getPartMovies('movie/anticipated', first),
+      dataSources.MoviesAPI.getPartMovies('movie/upcoming', first),
     popularMovies: (_, { first }, { dataSources }) =>
       dataSources.MoviesAPI.getPartMovies('movie/top_rated', first),
     movieDetails: async (_, { id }, { dataSources }) => {
-      return dataSources.moviesAPI.getMovies(`movie/${id}`);
+      const data = await dataSources.MoviesAPI.getMovie(`movie/${id}`);
+
+      return data;
     },
     allWatchLists: async (_, { id }, { dataSources }) => {
       try {

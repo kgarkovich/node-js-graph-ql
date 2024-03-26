@@ -10,10 +10,7 @@ const typeDefs = gql`
   type Movie {
     id: ID!
     title: String!
-    overview: String
-    releaseDate: String
     poster_path: String
-    backdrop_path: String
   }
 
   type Results {
@@ -27,7 +24,8 @@ const typeDefs = gql`
     id: ID!
     title: String!
     overview: String!
-    releaseDate: String!
+    release_date: String!
+    backdrop_path: String!
   }
 
   type AuthPayload {
@@ -45,7 +43,7 @@ const typeDefs = gql`
     allMovies: [Movie]
     anticipatedMovies(first: Int): [Movie]
     popularMovies(first: Int): [Movie]
-    movieDetails: [MovieDetails]
+    movieDetails(id: ID!): MovieDetails
     allWatchLists: [Watchlist]
     watchlist(userId: String!): [Watchlist]
   }
