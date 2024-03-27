@@ -10,16 +10,9 @@ const watchlistMovieSchema = new Schema({
     type: String,
     required: true,
   },
-  overview: {
-    type: String,
-    required: true,
-  },
-  releaseDate: {
-    type: String,
-    required: true,
-  },
 });
 
 const WatchlistMovie = mongoose.model('WatchlistMovie', watchlistMovieSchema);
 
 module.exports = WatchlistMovie;
+module.exports = watchlistMovieSchema;

@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const WatchlistMovie = require('../models/watchlist-movie');
 const Watchlist = require('../models/watchlist');
 const { generateToken } = require('../utils/auth');
 
@@ -17,14 +16,24 @@ const resolvers = {
 
       return data;
     },
-    allWatchLists: async (_, { id }, { dataSources }) => {
+    allWatchLists: async (_, { userId }, { dataSources }) => {
       try {
-        const watchlists = await Watchlist.find({ id });
+        const watchlists = await Watchlist.find({ userId });
 
         return watchlists;
       } catch (error) {
         console.error('Error fetching watchlists:', error);
         throw new Error('Failed to fetch watchlists');
+      }
+    },
+    oneWatchList: async (_, { id }, { dataSources }) => {
+      try {
+        const watchlist = await Watchlist.findById(id);
+
+        return watchlist;
+      } catch (error) {
+        console.error('Error fetching watchlist:', error);
+        throw new Error('Failed to fetch watchlist');
       }
     },
   },
@@ -71,25 +80,38 @@ const resolvers = {
           throw new Error(error);
         }
     },
-    addMovieToWatchlist: async (_, { id }, { dataSources }) => {
+    addMovieToWatchlist: async (_, { id, movie }, { dataSources }) => {
       try {
-        const movieData = await dataSources.moviesAPI.getMovies(`movie/${id}`);
+        const watchlist = await Watchlist.findById(id);
+        const existingMovie = watchlist.movies.find((item) => item.id === movie.id);
 
-        const watchlistMovie = new WatchlistMovie({
-          id: movieData.id,
-          title: movieData.title,
-          overview: movieData.overview,
-          releaseDate: movieData.releaseDate,
-        });
+        if (existingMovie) {
+          throw new Error('Movie already exists in watchlist');
+        }
 
-        await watchlistMovie.save();
+        watchlist.movies.push(movie);
 
-        return movieData;
+        await watchlist.save();
+    
+        return watchlist;
       } catch (error) {
           console.error('Error fetching and saving movie data:', error);
         throw error;
       }
+    },
+    removeMovieFromWatchlist: async (_, { id, movieId }, { dataSources }) => {
+      try {
+        const watchlist = await Watchlist.findById(id);
 
+        watchlist.movies = watchlist.movies.filter(movie => movie.id !== movieId);
+
+        await watchlist.save();
+    
+        return watchlist;
+      } catch (error) {
+          console.error('Error fetching and saving movie data:', error);
+        throw error;
+      }
     },
     createWatchlist: async (_, { userId, title }) => {
       try {
