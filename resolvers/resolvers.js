@@ -5,8 +5,14 @@ const { generateToken } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    allMovies: (_, __, { dataSources }) =>
-      dataSources.MoviesAPI.getMovies('movie/now_playing?language=en-US&page=2'),
+    allMovies: (_, { page }, { dataSources }) => {
+      return dataSources.MoviesAPI.getMovies(`movie/now_playing?language=en-US&page=${page}`);
+    },
+    filterMovies: (_, args, { dataSources }) => {
+      const { page, genre = null, region = '', year = null } = args || {};
+
+      return dataSources.MoviesAPI.filterMovies(`movie/now_playing?language=en-US&page=${page}`, { region, genre, year });
+    },
     anticipatedMovies: (_, { first }, { dataSources }) =>
       dataSources.MoviesAPI.getPartMovies('movie/upcoming', first),
     popularMovies: (_, { first }, { dataSources }) =>
@@ -36,6 +42,10 @@ const resolvers = {
         throw new Error('Failed to fetch watchlist');
       }
     },
+    genres: (_, __, { dataSources }) =>
+      dataSources.MoviesAPI.getGenres('genre/movie/list?language=en'),
+    countries: (_, __, { dataSources }) =>
+      dataSources.MoviesAPI.getCountries('configuration/countries?language=en-US'),
   },
   Mutation: {
     register: async (_, { username, password }) => {
@@ -95,7 +105,7 @@ const resolvers = {
     
         return watchlist;
       } catch (error) {
-          console.error('Error fetching and saving movie data:', error);
+          console.error('Failed to adding movie:', error);
         throw error;
       }
     },
@@ -109,7 +119,7 @@ const resolvers = {
     
         return watchlist;
       } catch (error) {
-          console.error('Error fetching and saving movie data:', error);
+          console.error('Failed to remove movie:', error);
         throw error;
       }
     },
@@ -131,6 +141,20 @@ const resolvers = {
       } catch (error) {
           console.error('Error removing watchlist:', error);
           throw new Error('Failed to remove watchlist');
+      }
+    },
+    renameWatchlist: async (_, { id, title }) => {
+      try {
+        const watchlist = await Watchlist.findById(id);
+
+        watchlist.title = title;
+
+        await watchlist.save();
+
+        return watchlist;
+      } catch (error) {
+          console.error('Error renaming watchlist:', error);
+          throw new Error('Failed to rename watchlist');
       }
     },
   }

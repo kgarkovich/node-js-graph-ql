@@ -13,6 +13,13 @@ const typeDefs = gql`
     poster_path: String
   }
 
+  type MovieResult {
+    page: Int
+    results: [Movie]
+    total_pages: Int
+    total_results: Int
+  }
+
   type Results {
     results: [Movie]
     page: Int
@@ -56,15 +63,28 @@ const typeDefs = gql`
     movies: [WatchlistMovie]
   }
 
+  type Genre {
+    id: Int!
+    name: String!
+  }
+
+  type Country {
+    iso_3166_1: String
+    english_name: String
+  }
+
   type Query {
     user(username: String!, id: String!): User
-    allMovies: [Movie]
+    allMovies(page: Int!): MovieResult
+    filterMovies(page: Int!, region: String, genre: Int, year: Int): MovieResult
     anticipatedMovies(first: Int): [Movie]
     popularMovies(first: Int): [Movie]
     movieDetails(id: ID!): MovieDetails
     allWatchLists(userId: ID!): [Watchlist]
     watchlist(userId: String!): [Watchlist]
     oneWatchList(id: ID!): Watchlist
+    genres: [Genre]
+    countries: [Country]
   }
 
   type Mutation {
@@ -74,6 +94,7 @@ const typeDefs = gql`
     removeMovieFromWatchlist(id: String!, movieId: String!): Watchlist!
     createWatchlist(userId: String!, title: String!): Watchlist!
     removeWatchlist(id: String!): Watchlist!
+    renameWatchlist(id: String!, title: String!): Watchlist!
   }
 `;
 
